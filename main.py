@@ -34,11 +34,59 @@ def battle(Pokemonlst, index1, index2): #hasnt been debugged yet, also may be co
         Pokemonlst[index1].kill()
         Pokemonlst.pop(index1)
 
+def gencoords(pos,speed,Area):
+    if pos[1] > Area or pos[0] > Area or pos[1] < 0 or pos[0] < 0: #strictk invariant
+        raise Exception('position passed out of bounds gencoords')
+
+    dir = random.randint(0,4) #randomly generate a direction
+    x = np.random.normal(loc=speed/10,scale=.5) # randomly generate how much to move in that directin
+    y = np.random.normal(loc=speed/10,scale=.5)
+    newpos = (Area,Area)
+    if dir == 0: # 4 different directions
+        newpos[0] = pos[0] + x
+        if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
+          newpos[0] = pos[0] - 2 * x  
+
+        newpos[1] = pos[1] + y
+        if newpos[1] > Area or newpos[1] < 0: # also checks this coord for out of bounds, changes direction
+          newpos[1] = pos[1] - 2 * y
+
+    elif dir == 1:
+        newpos[0] = pos[0] - x
+        if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
+          newpos[0] = pos[0] + 2 * x  
+
+        newpos[1] = pos[1] - y
+        if newpos[1] > Area or newpos[1] < 0: # also checks this coord for out of bounds, changes direction
+          newpos[1] = pos[1] + 2 * y 
+
+    elif dir == 2:
+        newpos[0] = pos[0] - x
+        if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
+          newpos[0] = pos[0] + 2 * x  
+
+        newpos[1] = pos[1] + y 
+        if newpos[1] > Area or newpos[1] < 0: # also checks this coord for out of bounds, changes direction
+          newpos[1] = pos[1] - 2 * y     
+    elif dir == 3:
+        newpos[0] = pos[0] + x
+        if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
+          newpos[0] = pos[0] - 2 * x  
+        newpos[1] = pos[1] - y
+        if newpos[1] > Area or newpos[1] < 0: # also checks this coord for out of bounds, changes direction
+          newpos[1] = pos[1] + 2 * y 
+    
+    
+    if pos[1] > Area or pos[0] > Area or pos[1] < 0 or pos[0] < 0: # strict invariant
+        raise Exception('position output out of bounds gencoords')
+    return newpos
+
 
 def move(Pokemonlst,Area):
     for pokemon in Pokemonlst:
-        pokemon.getstats()[7]
-        pokemon.newpos()
+        speed = pokemon.getstats()[7]
+        curpos = pokemon.getpos()
+        pokemon.newpos(gencoords(curpos,speed,Area)) #moves pokemon to new coordinates based on 
 
 def extractcoordlist(Pokemonlst): # helper for oneiter, will return list of coordinates of living pokemon so can use pdist and determine closeby pokemon
     pass
