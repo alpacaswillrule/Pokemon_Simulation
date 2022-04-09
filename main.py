@@ -2,13 +2,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import pdist
+from scipy.spatial.distance import squareform
 from Pokemonclass import Pokemon
 import random
 
 statsdataframe = pd.read_csv('Pokemon.csv')
 typechart = pd.read_csv('Pokemon_Type_Chart.csv')
 
-def initialize_simulation(NumPokemon = 15, Area = 300): #returns a list of each pokemon object, a list of coordinates aswell corresponding to list of pokemon objects
+def initialize_simulation(NumPokemon, Area): #returns a list of each pokemon object, a list of coordinates aswell corresponding to list of pokemon objects
     Pokemonlst = []
     x = random.sample(range(0, Area), NumPokemon)
     y = random.sample(range(0, Area), NumPokemon)
@@ -95,13 +96,33 @@ def extractcoordlist(Pokemonlst): # returns lst of coordinates for all pokemon
 
     return coordlst
 
+def reproduce(Pokemonlst,index1,index2,Area):
+    if Pokemonlst[index1].can_reproduce() == True and Pokemonlst[index2].can_reproduce() == True:
+        Pokemonlst[index1].reproduce()
+        Pokemonlst[index1].reproduce()
+        x = random.sample(range(0, Area))
+        y = random.sample(range(0, Area))
+        Pokemonlst.append(Pokemon(statsdataframe.iloc[0],(x,y)))
+
+    return Pokemonlst
+
 def oneiter(Pokemonlst, NumPokemon, Area): #use pdist here, run the move function, and run their oneround functions then call battle function for one that encounter each other
-    pass
+    dists = extractcoordlist(Pokemonlst)
+    distmatrix = squareform(pdist(dists))
+    print(distmatrix)
+
+
+    #first we find closeby pokemon, then they fight or fuck
+    #then oneround for cooldowns
+    #them move
 
 def visualize(Pokemonlst,NumPokemon,Area):
     pass
 
-initialize_simulation()
+NumPokemon = 15
+Area = 300
+Pokemonlst = initialize_simulation(NumPokemon,Area)
+oneiter(Pokemonlst,NumPokemon,Area)
         
 
 
