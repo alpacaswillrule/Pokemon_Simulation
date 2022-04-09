@@ -67,8 +67,8 @@ def battle(Pokemonlst, index1, index2): #hasnt been debugged yet, also may be co
     firstadv = typechart[stat2][stat1int] #looks up type advantage in typechart, returns number from .5 to 2
     secondadv = typechart[stat1][stat2int]
 
-    stren1 = np.random.normal(loc=1,scale=.8) * Pokemonlst.getstren() * firstadv #adds randomness and type advantage to their calculated strength
-    stren2 = np.random.normal(loc=1,scale=.8) * Pokemonlst.getstren() * secondadv
+    stren1 = np.random.normal(loc=1,scale=.8) * Pokemonlst[index1].getstren() * firstadv #adds randomness and type advantage to their calculated strength
+    stren2 = np.random.normal(loc=1,scale=.8) * Pokemonlst[index2].getstren() * secondadv
 
     if stren1>stren2: #the battle! one of them is killed, maybe adjust in future so theres a chance that one survives
         Pokemonlst[index2].kill()
