@@ -1,4 +1,5 @@
 #import stats in main
+from logging import raiseExceptions
 import numpy as np
 import pandas as pd
 
@@ -30,10 +31,13 @@ class Pokemon(object):
         if self.isAlive == True:
             self.reproducecounter += 1
         else:
-            pass
+            raise Exception("dead pokemon in oneround")
 
     def newpos(self,pos):
-        self.position = pos
+        if self.isAlive == True:
+            self.position = pos
+        else:
+            raise Exception("dead pokemon moved")
 
     def can_reproduce(self):  #both pokemon need to return true for it to happen
         if self.reproducecounter > self.reproducecap:
@@ -42,10 +46,19 @@ class Pokemon(object):
             return False
     
     def reproduce(self):
-        self.reproducecounter = 0
+        if self.isAlive == True:
+            self.reproducecounter = 0
+        else:
+            raise Exception("dead pokemon reproduced")
 
     def getstats(self):
-        return self.statlst
+        if self.isAlive == True:
+            return self.statlst
+        else:
+            raise Exception("dead stats accessed")
 
     def getpos(self):
-        return self.position
+        if self.isAlive == True:
+            return self.position
+        else:
+            raise Exception("dead position accessed")

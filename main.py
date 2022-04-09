@@ -30,15 +30,22 @@ def battle(Pokemonlst, index1, index2): #hasnt been debugged yet
 
     if stren1>stren2: #the battle! one of them is killed, maybe adjust in future so theres a chance that one survives
         Pokemonlst[index2].kill()
+        Pokemonlst.pop(index2)
+
     else:
         Pokemonlst[index1].kill()
+        Pokemonlst.pop(index1)
 
 
 def move(Pokemonlst,Area):
     pass
 
-def oneiter(Pokemonlst, NumPokemon, Area):
+def extractcoordlist(Pokemonlst): # helper for oneiter, will return list of coordinates of living pokemon
     pass
+
+def oneiter(Pokemonlst, NumPokemon, Area): #use pdist here
+    pass
+
 
 initialize_simulation()
         
