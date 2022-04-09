@@ -6,7 +6,9 @@ from Pokemonclass import Pokemon
 import random
 
 statsdataframe = pd.read_csv('Pokemon.csv')
+typechart = pd.read_csv('Pokemon_Type_Chart.csv')
 
+print(np.unique(statsdataframe['Type 1']))
 def initialize_simulation(NumPokemon = 15, Area = 300): #returns a list of each pokemon object, a list of coordinates aswell corresponding to list of pokemon objects
     Pokemonlst = []
     x = random.sample(range(0, Area), NumPokemon)
@@ -16,8 +18,17 @@ def initialize_simulation(NumPokemon = 15, Area = 300): #returns a list of each 
     return Pokemonlst
     
 def battle(Pokemonlst, index1, index2):
-    Pokemonlst[index1].getstats()
-    Pokemonlst[index2].getstats()
+    stat1 = Pokemonlst[index1].getstats()
+    stat2 = Pokemonlst[index2].getstats()
+    #also need to get type advantage
+    stat1[1]
+    stat2[1]
+
+
+    stren1 = np.random.normal(loc=1,scale=.4) * stat1[3] * stat1[2] * stat1[4] * stat1[5] * stat1[7]
+    stren2 = np.random.normal(loc=1,scale=.4) * stat2[3] * stat2[2] * stat2[4] * stat2[5] * stat2[7]
+
+
 
 
 
