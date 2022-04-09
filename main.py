@@ -34,6 +34,7 @@ def battle(Pokemonlst, index1, index2): #hasnt been debugged yet, also may be co
     else:
         Pokemonlst[index1].kill()
         Pokemonlst.pop(index1)
+    return Pokemonlst
 
 def gencoords(pos,speed,Area):
     if pos[1] > Area or pos[0] > Area or pos[1] < 0 or pos[0] < 0: #strictk invariant
@@ -88,6 +89,7 @@ def move(Pokemonlst,Area):
         speed = pokemon.getstats()[7]
         curpos = pokemon.getpos()
         pokemon.newpos(gencoords(curpos,speed,Area)) #moves pokemon to new coordinates based on their speed and area constraints
+    return Pokemonlst
 
 def extractcoordlist(Pokemonlst): # returns lst of coordinates for all pokemon
     coordlst = []
@@ -106,11 +108,20 @@ def reproduce(Pokemonlst,index1,index2,Area):
 
     return Pokemonlst
 
-def oneiter(Pokemonlst, NumPokemon, Area): #use pdist here, run the move function, and run their oneround functions then call battle function for one that encounter each other
+def oneiter(Pokemonlst, NumPokemon, Area,engagedist): #use pdist here, run the move function, and run their oneround functions then call battle function for one that encounter each other
     dists = extractcoordlist(Pokemonlst)
     distmatrix = squareform(pdist(dists))
-    print(distmatrix)
-
+    np.fill_diagonal(distmatrix,float('inf'))
+    conflicts = np.argwhere(distmatrix<engagedist) 
+    conflicts = set(conflicts.flatten()) #duplicates removed
+    for conflict in conflicts:
+        if Pokemonlst[conflict[0]].getname() ==  Pokemonlst[conflict[1]].getname():
+            Pokemonlst = reproduce(Pokemonlst,conflict[0],conflict[1],Area)
+        else:
+            Pokemonlst = battle(Pokemonlst,conflict[0],conflict[1])
+    for pokemon in Pokemonlst:
+        pokemon.oneround()
+    Pokemonlst = move(Pokemonlst, Area)
 
     #first we find closeby pokemon, then they fight or fuck
     #then oneround for cooldowns
@@ -118,11 +129,12 @@ def oneiter(Pokemonlst, NumPokemon, Area): #use pdist here, run the move functio
 
 def visualize(Pokemonlst,NumPokemon,Area):
     pass
-
+###parameters, can also adjust reproduce cap in pokemonclass.py
 NumPokemon = 15
 Area = 300
+engage_dist = 10
 Pokemonlst = initialize_simulation(NumPokemon,Area)
-oneiter(Pokemonlst,NumPokemon,Area)
+oneiter(Pokemonlst,NumPokemon,Area,engage_dist)
         
 
 

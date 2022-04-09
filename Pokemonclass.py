@@ -22,7 +22,11 @@ class Pokemon(object):
         self.position = pos
         self.isAlive = True
         self.reproducecap = self.statlst[2]/10
-        self.reproducecounter = 0 # their cooldown is based on hp, when counter hits their cap they can reproduce
+        self.reproducecounter = 0 # their cooldown is based on hp/10, when counter hits their cap they can reproduce
+    
+    
+    def getname(self):
+        return self.statlst[0]
 
     def kill(self):
         self.isAlive = False #need to remeber to ensure that dead pokemon are ignored in pdist calculations.
