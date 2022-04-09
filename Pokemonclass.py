@@ -8,15 +8,15 @@ class Pokemon(object):
     def __init__(self, stats,pos): #initalizing a pokemon, stores stats in statlst. 
 
         self.statlst = []
-        self.statlst.append(stats['Name'])
-        self.statlst.append(stats['Type 1'])
-        self.statlst.append(stats['HP'])
-        self.statlst.append(stats['Attack'])
-        self.statlst.append(stats['Defense'])
-        self.statlst.append(stats['Sp. Atk'])
-        self.statlst.append(stats['Sp. Def'])
-        self.statlst.append(stats['Speed'])
-        self.statlst.append(stats['Legendary'])
+        self.statlst.append(stats['Name'])#0
+        self.statlst.append(stats['Type 1'])#1
+        self.statlst.append(stats['HP'])#2
+        self.statlst.append(stats['Attack'])#3
+        self.statlst.append(stats['Defense'])#4
+        self.statlst.append(stats['Sp. Atk'])#5
+        self.statlst.append(stats['Sp. Def'])#6
+        self.statlst.append(stats['Speed'])#7
+        self.statlst.append(stats['Legendary'])#8
 
         self.position = pos
         self.isAlive = True
