@@ -18,6 +18,7 @@ class Pokemon(object):
         self.statlst.append(stats['Speed'])#7
         self.statlst.append(stats['Legendary'])#8
 
+        self.strength = self.statlst[3] * self.statlst[2] * self.statlst[4] * self.statlst[5] * self.statlst[7]
         self.position = pos
         self.isAlive = True
         self.reproducecap = self.statlst[2]/10
@@ -26,7 +27,13 @@ class Pokemon(object):
     def kill(self):
         self.isAlive = False #need to remeber to ensure that dead pokemon are ignored in pdist calculations.
         self.position = (-1,-1) 
-    
+
+    def getstren(self):
+        return self.strength
+
+    def get_type(self):
+        return self.statlst[1]
+
     def oneround(self): #just reduces cooldown on reproduce
         if self.isAlive == True:
             self.reproducecounter += 1
