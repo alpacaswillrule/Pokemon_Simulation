@@ -4,7 +4,7 @@ import pandas as pd
 
 
 class Pokemon(object):
-    def __init__(self, stats): #initalizing a pokemon, stores stats in statlst. 
+    def __init__(self, stats,pos): #initalizing a pokemon, stores stats in statlst. 
 
         self.statlst = []
         self.statlst.append(stats['Name'])
@@ -16,6 +16,13 @@ class Pokemon(object):
         self.statlst.append(stats['Sp.Def'])
         self.statlst.append(stats['Speed'])
         self.statlst.append(stats['Legendary'])
+
+        self.position = pos
+        self.isAlive = True
+
     
     def getstats(self):
         return self.statlst
+
+    def getpos(self):
+        return self.position
