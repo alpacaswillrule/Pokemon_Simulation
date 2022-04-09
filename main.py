@@ -61,10 +61,11 @@ def typetoindex(stat2):
 def battle(Pokemonlst, index1, index2): #hasnt been debugged yet, also may be cool to add a hp function by which hp reduces over time
     stat1 = Pokemonlst[index1].get_type()
     stat2 = Pokemonlst[index2].get_type() # gets pokemon's primary type
-    if stat2 == ''
+    stat2int = typetoindex(stat2)
+    stat1int = typetoindex(stat1)
 
-    firstadv = typechart.loc[stat2].loc[stat1] #looks up type advantage in typechart, returns number from .5 to 2
-    secondadv = typechart.loc[stat1].loc[stat2]
+    firstadv = typechart[stat2][stat1int] #looks up type advantage in typechart, returns number from .5 to 2
+    secondadv = typechart[stat1][stat2int]
 
     stren1 = np.random.normal(loc=1,scale=.8) * Pokemonlst.getstren() * firstadv #adds randomness and type advantage to their calculated strength
     stren2 = np.random.normal(loc=1,scale=.8) * Pokemonlst.getstren() * secondadv
