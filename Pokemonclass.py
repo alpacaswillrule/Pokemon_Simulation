@@ -1,13 +1,21 @@
 #import stats in main
+import numpy as np
+import pandas as pd
+
 
 class Pokemon(object):
-    def __init__(self, stats):
-        self.name = stats['Name']
-        self.type1 =   stats['Type 1']
-        self.hp = stats['HP']
-        self.attack = stats['Attack']
-        self.defense = stats['Defense']
-        self.spattack = stats['Sp.Atk']
-        self.spdefense = stats['Sp.Def']
-        self.speed = stats['Speed']
-        self.islegendary = stats['Legendary']
+    def __init__(self, stats): #initalizing a pokemon, stores stats in statlst. 
+
+        self.statlst = []
+        self.statlst.append(stats['Name'])
+        self.statlst.append(stats['Type 1'])
+        self.statlst.append(stats['HP'])
+        self.statlst.append(stats['Attack'])
+        self.statlst.append(stats['Defense'])
+        self.statlst.append(stats['Sp.Atk'])
+        self.statlst.append(stats['Sp.Def'])
+        self.statlst.append(stats['Speed'])
+        self.statlst.append(stats['Legendary'])
+    
+    def getstats(self):
+        return self.statlst
