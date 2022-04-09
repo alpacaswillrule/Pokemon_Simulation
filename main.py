@@ -11,11 +11,20 @@ def initialize_simulation(NumPokemon = 15, Area = 300): #returns a list of each 
     Pokemonlst = []
     x = random.sample(range(0, Area), NumPokemon)
     y = random.sample(range(0, Area), NumPokemon)
-    for i in NumPokemon:
+    for i in range(NumPokemon):
         Pokemonlst.append(Pokemon(statsdataframe.iloc[0],(x[i],y[i])))
+    return Pokemonlst
     
+def battle(Pokemonlst, index1, index2):
+    Pokemonlst[index1].getstats()
+    Pokemonlst[index2].getstats()
 
 
+
+
+
+
+initialize_simulation()
         
 
 
