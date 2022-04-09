@@ -86,11 +86,12 @@ def move(Pokemonlst,Area):
     for pokemon in Pokemonlst:
         speed = pokemon.getstats()[7]
         curpos = pokemon.getpos()
-        pokemon.newpos(gencoords(curpos,speed,Area)) #moves pokemon to new coordinates based on 
+        pokemon.newpos(gencoords(curpos,speed,Area)) #moves pokemon to new coordinates based on their speed and area constraints
 
-def extractcoordlist(Pokemonlst): # helper for oneiter, will return list of coordinates of living pokemon so can use pdist and determine closeby pokemon
+def extractcoordlist(Pokemonlst): # returns lst of coordinates for all pokemon
     coordlst = []
     for pokemon in Pokemonlst:
+        coordlst.append(pokemon.getpos())
 
     return coordlst
 
