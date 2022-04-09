@@ -21,12 +21,12 @@ def battle(Pokemonlst, index1, index2):
     stat1 = Pokemonlst[index1].getstats()
     stat2 = Pokemonlst[index2].getstats()
     #also need to get type advantage
-    stat1[1]
-    stat2[1]
+    firstadv = typechart[stat1[1]].loc[stat2[1]]
+    secondadv = typechart[stat2[1]].loc[stat1[1]]
 
 
-    stren1 = np.random.normal(loc=1,scale=.4) * stat1[3] * stat1[2] * stat1[4] * stat1[5] * stat1[7]
-    stren2 = np.random.normal(loc=1,scale=.4) * stat2[3] * stat2[2] * stat2[4] * stat2[5] * stat2[7]
+    stren1 = np.random.normal(loc=1,scale=.8) * stat1[3] * stat1[2] * stat1[4] * stat1[5] * stat1[7] * firstadv
+    stren2 = np.random.normal(loc=1,scale=.8) * stat2[3] * stat2[2] * stat2[4] * stat2[5] * stat2[7] * secondadv
 
 
 
