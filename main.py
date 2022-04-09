@@ -14,13 +14,55 @@ def initialize_simulation(NumPokemon, Area): #returns a list of each pokemon obj
     x = random.sample(range(0, Area), NumPokemon)
     y = random.sample(range(0, Area), NumPokemon)
     for i in range(NumPokemon):
-        Pokemonlst.append(Pokemon(statsdataframe.iloc[0],(x[i],y[i])))
+        Pokemonlst.append(Pokemon(statsdataframe.iloc[i],(x[i],y[i])))
     return Pokemonlst
-    
+
+def typetoindex(stat2):
+    if stat2 == 'Normal':
+        return 0
+    elif stat2 == 'Fire':
+        return 1
+    elif stat2 == 'Water':
+        return 2
+    elif stat2 == 'Electric':
+        return 3
+    elif stat2 == 'Grass':
+        return 4
+    elif stat2 == 'Ice':
+        return 5
+    elif stat2 == 'Fighting':
+        return 6
+    elif stat2 == 'Poison':
+        return 7
+    elif stat2 == 'Ground':
+        return 8
+    elif stat2 == 'Flying':
+        return 9
+    elif stat2 == 'Psychic':
+        return 10
+    elif stat2 == 'Bug':
+        return 11
+    elif stat2 == 'Rock':
+        return 12
+    elif stat2 == 'Ghost':
+        return 13
+    elif stat2 == 'Dragon':
+        return 14
+    elif stat2 == 'Dark':
+        return 15
+    elif stat2 == 'Steel':
+        return 16
+    elif stat2 == 'Fairy':
+        return 17
+    else:
+        raise Exception("unrecognied type in type to index")
+
+
 def battle(Pokemonlst, index1, index2): #hasnt been debugged yet, also may be cool to add a hp function by which hp reduces over time
     stat1 = Pokemonlst[index1].get_type()
     stat2 = Pokemonlst[index2].get_type() # gets pokemon's primary type
-    
+    if stat2 == ''
+
     firstadv = typechart.loc[stat2].loc[stat1] #looks up type advantage in typechart, returns number from .5 to 2
     secondadv = typechart.loc[stat1].loc[stat2]
 
@@ -88,8 +130,6 @@ def move(Pokemonlst,Area):
     for pokemon in Pokemonlst:
         speed = pokemon.getstats()[7]
         curpos = pokemon.getpos()
-        print("curpos")
-        print(curpos)
         pokemon.newpos(gencoords(curpos,speed,Area)) #moves pokemon to new coordinates based on their speed and area constraints
     return Pokemonlst
 
@@ -141,6 +181,7 @@ Area = 300
 engage_dist = 10
 iterations = 20
 Pokemonlst = initialize_simulation(NumPokemon,Area)
+
 visualize(Pokemonlst,NumPokemon,Area)
 while iterations > 0:
     oneiter(Pokemonlst,NumPokemon,Area,engage_dist)
