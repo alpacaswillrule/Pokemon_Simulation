@@ -6,7 +6,7 @@ from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from Pokemonclass import Pokemon
 import random
-
+from matplotlib.pyplot import cm
 statsdataframe = pd.read_csv('Pokemon.csv')
 typechart = pd.read_csv('Pokemon_Type_Chart.csv')
 
@@ -77,11 +77,11 @@ def battle(Pokemonlst, index1, index2): #hasnt been debugged yet, also may be co
     if stren1>stren2: #the battle! one of them is killed, maybe adjust in future so theres a chance that one survives
         Pokemonlst[index2].kill()
         #Pokemonlst.pop(index2) #is now done later because was confounding loop through conflicts
-        print(Pokemonlst[index2].getname()+" has died")
+        print(Pokemonlst[index2].getname()+" has died, killed by "+Pokemonlst[index1].getname())
     else:
         Pokemonlst[index1].kill()
         #Pokemonlst.pop(index1)
-        print(Pokemonlst[index1].getname()+" has died")
+        print(Pokemonlst[index1].getname()+" has died, killed by "+Pokemonlst[index2].getname())
     return Pokemonlst
 
 def gencoords(pos,speed,Area):
@@ -192,10 +192,11 @@ def visualize(Pokemonlst,Area):
     # plt.show()
     names = extractnamelist(Pokemonlst)
     labels,freq = np.unique(names,return_counts=True)
+    color = cm.rainbow(np.linspace(0,1,len(labels)))
     for index in range(len(labels)):
-        indiciesforonepokemon = [names.index(x) for x in names if x == labels[index] ] #this whole segement before the plt.show is to ensure we plot all pokemon on grid with their own colors, but since limited color amount will be overlap for large numbers
+        indiciesforonepokemon = [c for c,k in enumerate(names) if k == labels[index]]
         xplot = [x[i] for i in indiciesforonepokemon]  
-        plt.scatter(*zip(*xplot))
+        plt.scatter(*zip(*xplot), color=color[index]) #gives unique colors if there are enough colors to each pokemon in scatterplot
     plt.show()
 
     plt.scatter(labels,freq)
@@ -205,7 +206,7 @@ def visualize(Pokemonlst,Area):
 NumPokemon = 500
 Numduplicates = 2 #number of duplicates made of each pokemon
 Area = 15000 #keep this large or not enough unique spots to start for pokemon
-engage_dist = 10
+engage_dist = 40
 iterations = 20
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
 
