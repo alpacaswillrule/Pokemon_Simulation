@@ -75,7 +75,7 @@ class Pokemon(object):
             raise Exception("dead position accessed")
 
     def isAlive(self):
-        if self.isAlive:
+        if self.isAlive == True:
             return True
         else:
             return False

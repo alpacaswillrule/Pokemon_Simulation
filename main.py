@@ -12,11 +12,13 @@ typechart = pd.read_csv('Pokemon_Type_Chart.csv')
 
 def initialize_simulation(NumPokemon,Numduplicates, Area): #returns a list of each pokemon object, a list of coordinates aswell corresponding to list of pokemon objects
     Pokemonlst = []
-    x = random.sample(range(0, Area), NumPokemon*Numduplicates)
+    x = random.sample(range(0, Area), NumPokemon*Numduplicates) #gets unique x and y positions for each pokemon in the area, crashes if area too small
     y = random.sample(range(0, Area), NumPokemon*Numduplicates)
-    for j in range(0,NumPokemon*Numduplicates,Numduplicates):
+    posindex = 0
+    for j in range(0,NumPokemon):
         for i in range(Numduplicates):
-            Pokemonlst.append(Pokemon(statsdataframe.iloc[j],(x[j+i],y[j+i])))
+            Pokemonlst.append(Pokemon(statsdataframe.iloc[j],(x[posindex],y[posindex])))
+            posindex+=1
     return Pokemonlst
 
 def typetoindex(stat2):
@@ -143,6 +145,11 @@ def extractcoordlist(Pokemonlst): # returns lst of coordinates for all pokemon
         coordlst.append(pokemon.getpos())
 
     return coordlst
+def extractnamelist(Pokemonlst):
+    namelst = []
+    for pokemon in Pokemonlst:
+        namelst.append(pokemon.getname())
+    return namelst
 
 def reproduce(Pokemonlst,index1,index2,Area):
     if Pokemonlst[index1].can_reproduce() == True and Pokemonlst[index2].can_reproduce() == True:
@@ -155,6 +162,7 @@ def reproduce(Pokemonlst,index1,index2,Area):
     return Pokemonlst
 
 def oneiter(Pokemonlst, Area,engagedist): #use pdist here, run the move function, and run their oneround functions then call battle function for one that encounter each other
+    
     dists = extractcoordlist(Pokemonlst)
     distmatrix = squareform(pdist(dists))
     np.fill_diagonal(distmatrix,float('inf')) #create distance matrix between all pokemon
@@ -162,20 +170,19 @@ def oneiter(Pokemonlst, Area,engagedist): #use pdist here, run the move function
     conflicts = set(conflicts.flatten()) #duplicates removed from conflicts
     it = iter(conflicts)
     conflicts = list(zip(it,it))
-    print(conflicts)
+    
     for conflict in conflicts: # problem, pokemonlst gets shortened by each battle so conflict indexes change, will change their status to is dead, then after for loop remove all isdead from list
-        print(conflict)
         if Pokemonlst[conflict[0]].getname() ==  Pokemonlst[conflict[1]].getname():
             Pokemonlst = reproduce(Pokemonlst,conflict[0],conflict[1],Area)
-            print(conflict[0].getname()+" was born")
+            print(Pokemonlst[conflict[0]].getname()+" was born")
         else:
             Pokemonlst = battle(Pokemonlst,conflict[0],conflict[1])
     
+    Pokemonlst[:] = [x for x in Pokemonlst if x.isAlive == True]
+
     for pokemon in Pokemonlst:
-        if pokemon.isalive() == False:
-            Pokemonlst.remove(pokemon)
-        else:
-            pokemon.oneround()
+        pokemon.oneround()
+
     Pokemonlst = move(Pokemonlst, Area)
 
 
@@ -183,13 +190,15 @@ def visualize(Pokemonlst,Area):
     x = extractcoordlist(Pokemonlst)
     plt.scatter(*zip(*x))
     plt.show()
-
-
+    names = extractnamelist(Pokemonlst)
+    labels,freq = np.unique(names,return_counts=True)
+    plt.scatter(labels,freq)
+    plt.show()
 
 ###parameters, can also adjust reproduce cap in pokemonclass.py
-NumPokemon = 15
+NumPokemon = 500
 Numduplicates = 2 #number of duplicates made of each pokemon
-Area = 300
+Area = 15000 #keep this large or not enough unique spots to start for pokemon
 engage_dist = 10
 iterations = 20
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
@@ -198,7 +207,7 @@ visualize(Pokemonlst,Area)
 while iterations > 0:
     oneiter(Pokemonlst,Area,engage_dist)
     iterations-=1
-visualize(Pokemonlst,NumPokemon,Area)
+visualize(Pokemonlst,Area)
         
 
 
