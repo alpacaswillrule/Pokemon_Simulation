@@ -188,10 +188,16 @@ def oneiter(Pokemonlst, Area,engagedist): #use pdist here, run the move function
 
 def visualize(Pokemonlst,Area):
     x = extractcoordlist(Pokemonlst)
-    plt.scatter(*zip(*x))
-    plt.show()
+    # plt.scatter(*zip(*x))
+    # plt.show()
     names = extractnamelist(Pokemonlst)
     labels,freq = np.unique(names,return_counts=True)
+    for index in range(len(labels)):
+        indiciesforonepokemon = [names.index(x) for x in names if x == labels[index] ] #this whole segement before the plt.show is to ensure we plot all pokemon on grid with their own colors, but since limited color amount will be overlap for large numbers
+        xplot = [x[i] for i in indiciesforonepokemon]  
+        plt.scatter(*zip(*xplot))
+    plt.show()
+
     plt.scatter(labels,freq)
     plt.show()
 
