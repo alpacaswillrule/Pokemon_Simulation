@@ -197,6 +197,7 @@ def visualize(Pokemonlst,Area):
         indiciesforonepokemon = [c for c,k in enumerate(names) if k == labels[index]]
         xplot = [x[i] for i in indiciesforonepokemon]  
         plt.scatter(*zip(*xplot), color=color[index]) #gives unique colors if there are enough colors to each pokemon in scatterplot
+    plt.legend(labels)
     plt.show()
 
     plt.scatter(labels,freq)
