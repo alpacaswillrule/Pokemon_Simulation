@@ -1,3 +1,4 @@
+from statistics import variance
 from xml.etree.ElementTree import tostring
 import numpy as np
 import pandas as pd
@@ -62,7 +63,7 @@ def typetoindex(stat2):
         raise Exception("unrecognied type in type to index")
 
 
-def battle(Pokemonlst, index1, index2): #hasnt been debugged yet, also may be cool to add a hp function by which hp reduces over time
+def battle(Pokemonlst, index1, index2,variance): #hasnt been debugged yet, also may be cool to add a hp function by which hp reduces over time
     stat1 = Pokemonlst[index1].get_type()
     stat2 = Pokemonlst[index2].get_type() # gets pokemon's primary type
     stat2int = typetoindex(stat2)
@@ -71,8 +72,8 @@ def battle(Pokemonlst, index1, index2): #hasnt been debugged yet, also may be co
     firstadv = typechart[stat2][stat1int] #looks up type advantage in typechart, returns number from .5 to 2
     secondadv = typechart[stat1][stat2int]
 
-    stren1 = np.random.normal(loc=1,scale=.8) * Pokemonlst[index1].getstren() * firstadv #adds randomness and type advantage to their calculated strength
-    stren2 = np.random.normal(loc=1,scale=.8) * Pokemonlst[index2].getstren() * secondadv
+    stren1 = np.random.normal(loc=1,scale=variance) * Pokemonlst[index1].getstren() * firstadv #adds randomness and type advantage to their calculated strength
+    stren2 = np.random.normal(loc=1,scale=variance) * Pokemonlst[index2].getstren() * secondadv
 
     if stren1>stren2: #the battle! one of them is killed, maybe adjust in future so theres a chance that one survives
         Pokemonlst[index2].kill()
@@ -88,11 +89,12 @@ def gencoords(pos,speed,Area):
     if pos[1] > Area or pos[0] > Area or pos[1] < 0 or pos[0] < 0: #strictk invariant
         raise Exception('position passed out of bounds gencoords')
 
-    dir = random.randint(0,4) #randomly generate a direction
+    dir = random.randint(0,3) #randomly generate a direction
     x = np.random.normal(loc=speed/10,scale=.5) # randomly generate how much to move in that directin
     y = np.random.normal(loc=speed/10,scale=.5)
     newpos = [Area,Area]
-    if dir == 0: # 4 different directions
+    if dir == 0: # 4 different directions, confirmed each one is chosen about equally. problem is witn the if statements
+       
         newpos[0] = pos[0] + x
         if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
           newpos[0] = pos[0] - 2 * x  
@@ -101,16 +103,18 @@ def gencoords(pos,speed,Area):
         if newpos[1] > Area or newpos[1] < 0: # also checks this coord for out of bounds, changes direction
           newpos[1] = pos[1] - 2 * y
 
-    elif dir == 1:
+    if dir == 1:
         newpos[0] = pos[0] - x
+        if newpos[0] > pos[0]:
+            raise Exception('newpos larger than old')
         if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
-          newpos[0] = pos[0] + 2 * x  
-
+            newpos[0] = pos[0] + 2 * x 
+           
         newpos[1] = pos[1] - y
         if newpos[1] > Area or newpos[1] < 0: # also checks this coord for out of bounds, changes direction
-          newpos[1] = pos[1] + 2 * y 
-
+            newpos[1] = pos[1] + 2 * y         
     elif dir == 2:
+        
         newpos[0] = pos[0] - x
         if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
           newpos[0] = pos[0] + 2 * x  
@@ -119,6 +123,7 @@ def gencoords(pos,speed,Area):
         if newpos[1] > Area or newpos[1] < 0: # also checks this coord for out of bounds, changes direction
           newpos[1] = pos[1] - 2 * y     
     elif dir == 3:
+       
         newpos[0] = pos[0] + x
         if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
           newpos[0] = pos[0] - 2 * x  
@@ -137,6 +142,7 @@ def move(Pokemonlst,Area):
         speed = pokemon.getstats()[7]
         curpos = pokemon.getpos()
         pokemon.newpos(gencoords(curpos,speed,Area)) #moves pokemon to new coordinates based on their speed and area constraints
+    
     return Pokemonlst
 
 def extractcoordlist(Pokemonlst): # returns lst of coordinates for all pokemon
@@ -157,11 +163,11 @@ def reproduce(Pokemonlst,index1,index2,Area):
         Pokemonlst[index1].reproduce()
         x = random.sample(range(0, Area),1)
         y = random.sample(range(0, Area),1)
-        Pokemonlst.append(Pokemon(statsdataframe.iloc[0],(x[0],y[0])))
+        Pokemonlst.append(Pokemon(statsdataframe.loc[Pokemonlst[index1].getname()],(x[0],y[0])))
 
     return Pokemonlst
 
-def oneiter(Pokemonlst, Area,engagedist): #use pdist here, run the move function, and run their oneround functions then call battle function for one that encounter each other
+def oneiter(Pokemonlst, Area,engagedist,var): #use pdist here, run the move function, and run their oneround functions then call battle function for one that encounter each other
     
     dists = extractcoordlist(Pokemonlst)
     distmatrix = squareform(pdist(dists))
@@ -176,14 +182,14 @@ def oneiter(Pokemonlst, Area,engagedist): #use pdist here, run the move function
             Pokemonlst = reproduce(Pokemonlst,conflict[0],conflict[1],Area)
             print(Pokemonlst[conflict[0]].getname()+" was born")
         else:
-            Pokemonlst = battle(Pokemonlst,conflict[0],conflict[1])
+            Pokemonlst = battle(Pokemonlst,conflict[0],conflict[1],var)
     
     Pokemonlst[:] = [x for x in Pokemonlst if x.isAlive == True]
 
     for pokemon in Pokemonlst:
         pokemon.oneround()
 
-    Pokemonlst = move(Pokemonlst, Area)
+    Pokemonlst = move(Pokemonlst, Area) #TODO move function is biased towards top right
 
 
 def visualize(Pokemonlst,Area):
@@ -204,19 +210,20 @@ def visualize(Pokemonlst,Area):
     plt.show()
 
 ###parameters, can also adjust reproduce cap in pokemonclass.py
-NumPokemon = 500
+NumPokemon = 50
 Numduplicates = 2 #number of duplicates made of each pokemon
-Area = 15000 #keep this large or not enough unique spots to start for pokemon
+Area = 200 #keep this large or not enough unique spots to start for pokemon
 engage_dist = 40
 iterations = 20
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
+var = 0 #from 0 to 1, how much variation do you want in pokemon battle outcomes
 
 visualize(Pokemonlst,Area)
 while iterations > 0:
-    oneiter(Pokemonlst,Area,engage_dist)
+    oneiter(Pokemonlst,Area,engage_dist,var)
     iterations-=1
 visualize(Pokemonlst,Area)
-        
+     
 
-
+#problem with code isnt 
 
