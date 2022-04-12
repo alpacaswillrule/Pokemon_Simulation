@@ -18,7 +18,7 @@ def initialize_simulation(NumPokemon,Numduplicates, Area): #returns a list of ea
     posindex = 0
     for j in range(0,NumPokemon):
         for i in range(Numduplicates):
-            Pokemonlst.append(Pokemon(statsdataframe.iloc[j],(x[posindex],y[posindex])))
+            Pokemonlst.append(Pokemon(statsdataframe.iloc[j],(x[posindex],y[posindex]),j))
             posindex+=1
     return Pokemonlst
 
@@ -163,7 +163,7 @@ def reproduce(Pokemonlst,index1,index2,Area):
         Pokemonlst[index1].reproduce()
         x = random.sample(range(0, Area),1)
         y = random.sample(range(0, Area),1)
-        Pokemonlst.append(Pokemon(statsdataframe.loc[Pokemonlst[index1].getname()],(x[0],y[0])))
+        Pokemonlst.append(Pokemon(statsdataframe.loc[Pokemonlst[index1].get_index()],(x[0],y[0]),index1))
 
     return Pokemonlst
 
@@ -206,17 +206,19 @@ def visualize(Pokemonlst,Area):
     plt.legend(labels)
     plt.show()
 
-    plt.scatter(labels,freq)
+    for index in range(len(labels)):
+        plt.scatter(labels[index],freq[index],color=color[index])
+    plt.legend(labels)
     plt.show()
 
 ###parameters, can also adjust reproduce cap in pokemonclass.py
-NumPokemon = 50
+NumPokemon = 70
 Numduplicates = 2 #number of duplicates made of each pokemon
 Area = 200 #keep this large or not enough unique spots to start for pokemon
 engage_dist = 40
-iterations = 20
+iterations = 200
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
-var = 0 #from 0 to 1, how much variation do you want in pokemon battle outcomes
+var = .5 #from 0 to 1, how much variation do you want in pokemon battle outcomes
 
 visualize(Pokemonlst,Area)
 while iterations > 0:
