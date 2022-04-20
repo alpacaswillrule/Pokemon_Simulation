@@ -105,8 +105,6 @@ def gencoords(pos,speed,Area):
 
     if dir == 1:
         newpos[0] = pos[0] - x
-        if newpos[0] > pos[0]:
-            raise Exception('newpos larger than old')
         if newpos[0] > Area or newpos[0] < 0:  #checks to see if out of bounds, changes direction if out of bounds
             newpos[0] = pos[0] + 2 * x 
            
@@ -216,7 +214,7 @@ NumPokemon = 70
 Numduplicates = 2 #number of duplicates made of each pokemon
 Area = 200 #keep this large or not enough unique spots to start for pokemon
 engage_dist = 40
-iterations = 200
+iterations = 2000
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
 var = .5 #from 0 to 1, how much variation do you want in pokemon battle outcomes
 
