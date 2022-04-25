@@ -11,6 +11,8 @@ from matplotlib.pyplot import cm
 statsdataframe = pd.read_csv('Pokemon.csv')
 typechart = pd.read_csv('Pokemon_Type_Chart.csv')
 
+killnamecounter = [] #appends pokemon name every time it makes a kill
+
 def initialize_simulation(NumPokemon,Numduplicates, Area): #returns a list of each pokemon object, a list of coordinates aswell corresponding to list of pokemon objects
     Pokemonlst = []
     x = random.sample(range(0, Area), NumPokemon*Numduplicates) #gets unique x and y positions for each pokemon in the area, crashes if area too small
@@ -79,10 +81,12 @@ def battle(Pokemonlst, index1, index2,variance): #hasnt been debugged yet, also 
         Pokemonlst[index2].kill()
         #Pokemonlst.pop(index2) #is now done later because was confounding loop through conflicts
         print(Pokemonlst[index2].getname()+" has died, killed by "+Pokemonlst[index1].getname())
+        killnamecounter.append(Pokemonlst[index1].getname())
     else:
         Pokemonlst[index1].kill()
         #Pokemonlst.pop(index1)
         print(Pokemonlst[index1].getname()+" has died, killed by "+Pokemonlst[index2].getname())
+        killnamecounter.append(Pokemonlst[index2].getname())
     return Pokemonlst
 
 def gencoords(pos,speed,Area):
@@ -187,7 +191,7 @@ def oneiter(Pokemonlst, Area,engagedist,var): #use pdist here, run the move func
     for pokemon in Pokemonlst:
         pokemon.oneround()
 
-    Pokemonlst = move(Pokemonlst, Area) #TODO move function is biased towards top right
+    Pokemonlst = move(Pokemonlst, Area) 
 
 
 def visualize(Pokemonlst,Area):
@@ -208,13 +212,21 @@ def visualize(Pokemonlst,Area):
         plt.scatter(labels[index],freq[index],color=color[index])
     plt.legend(labels)
     plt.show()
+    names,killfreq = np.unique(killnamecounter,return_counts=True)
+    plt.title("kill frequencies, will be empty at beginning")
+    color = cm.rainbow(np.linspace(0,1,len(names)))
+    for index in range(len(names)):
+        plt.scatter(names[index],killfreq[index], color=color[index]) #gives unique colors if there are enough colors to each pokemon in scatterplot
+    plt.legend(names)
+    plt.show()
+
 
 ###parameters, can also adjust reproduce cap in pokemonclass.py
 NumPokemon = 70
 Numduplicates = 2 #number of duplicates made of each pokemon
 Area = 200 #keep this large or not enough unique spots to start for pokemon
 engage_dist = 40
-iterations = 2000
+iterations = 200 #killf
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
 var = .5 #from 0 to 1, how much variation do you want in pokemon battle outcomes
 
