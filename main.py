@@ -240,8 +240,8 @@ iterations = 100 #killf
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
 var = .5 #from 0 to 1, how much variation do you want in pokemon battle outcomes
 vis_every_iters = iterations/2 #set this to however often you want to visualize the simulation. for example 150 means visualizes every 150 iterations, eg at 150,300,450 etc
-chance_survive = .5 # set this to values from 0 to 1, is chance a loser of battle escapes helps out the types that have low hp
-
+chance_survive = .8 # set this to values from 0 to 1, is chance a loser of battle escapes helps out the types that have low hp
+#also means that quantity of battles matters more, so may value speed state over raw stats too
 ############################################################
 
 vis_every_iters = int(vis_every_iters) #just in case are dividing iterations
