@@ -65,7 +65,7 @@ def typetoindex(stat2):
         raise Exception("unrecognied type in type to index")
 
 
-def battle(Pokemonlst, index1, index2,variance): #hasnt been debugged yet, also may be cool to add a hp function by which hp reduces over time
+def battle(Pokemonlst, index1, index2,variance,chance_survive): #hasnt been debugged yet, also may be cool to add a hp function by which hp reduces over time
     stat1 = Pokemonlst[index1].get_type()
     stat2 = Pokemonlst[index2].get_type() # gets pokemon's primary type
     stat2int = typetoindex(stat2)
@@ -78,14 +78,22 @@ def battle(Pokemonlst, index1, index2,variance): #hasnt been debugged yet, also 
     stren2 = np.random.normal(loc=1,scale=variance) * Pokemonlst[index2].getstren() * secondadv
 
     if stren1>stren2: #the battle! one of them is killed, maybe adjust in future so theres a chance that one survives
-        Pokemonlst[index2].kill()
+        #right here need to do chance survival draw
+        draw = random.uniform(0,1)
+        if draw > chance_survive:
+            Pokemonlst[index2].kill()
+            print(Pokemonlst[index2].getname()+" killed by "+Pokemonlst[index1].getname())
         #Pokemonlst.pop(index2) #is now done later because was confounding loop through conflicts
-        print(Pokemonlst[index2].getname()+" has died, killed by "+Pokemonlst[index1].getname())
+        print(Pokemonlst[index2].getname()+" escaped "+Pokemonlst[index1].getname())
         killnamecounter.append(Pokemonlst[index1].getname())
     else:
-        Pokemonlst[index1].kill()
+        draw = random.uniform(0,1)
+        if draw > chance_survive:
+            Pokemonlst[index1].kill()
+            print(Pokemonlst[index1].getname()+" killed by "+Pokemonlst[index2].getname())
+        else:
         #Pokemonlst.pop(index1)
-        print(Pokemonlst[index1].getname()+" has died, killed by "+Pokemonlst[index2].getname())
+            print(Pokemonlst[index1].getname()+" escaped "+Pokemonlst[index2].getname())
         killnamecounter.append(Pokemonlst[index2].getname())
     return Pokemonlst
 
@@ -169,7 +177,7 @@ def reproduce(Pokemonlst,index1,index2,Area):
 
     return Pokemonlst
 
-def oneiter(Pokemonlst, Area,engagedist,var): #use pdist here, run the move function, and run their oneround functions then call battle function for one that encounter each other
+def oneiter(Pokemonlst, Area,engagedist,var,chance_survive): #use pdist here, run the move function, and run their oneround functions then call battle function for one that encounter each other
     
     dists = extractcoordlist(Pokemonlst)
     distmatrix = squareform(pdist(dists))
@@ -184,7 +192,7 @@ def oneiter(Pokemonlst, Area,engagedist,var): #use pdist here, run the move func
             Pokemonlst = reproduce(Pokemonlst,conflict[0],conflict[1],Area)
             print(Pokemonlst[conflict[0]].getname()+" was born")
         else:
-            Pokemonlst = battle(Pokemonlst,conflict[0],conflict[1],var)
+            Pokemonlst = battle(Pokemonlst,conflict[0],conflict[1],var,chance_survive)
     
     Pokemonlst[:] = [x for x in Pokemonlst if x.isAlive == True]
 
@@ -194,10 +202,11 @@ def oneiter(Pokemonlst, Area,engagedist,var): #use pdist here, run the move func
     Pokemonlst = move(Pokemonlst, Area) 
 
 
-def visualize(Pokemonlst,Area):
+def visualize(Pokemonlst,Area,iter):
     x = extractcoordlist(Pokemonlst)
     # plt.scatter(*zip(*x))
     # plt.show()
+    plt.title("positions of pokemon at: "+str(iter)+" iterations")
     names = extractnamelist(Pokemonlst)
     labels,freq = np.unique(names,return_counts=True)
     color = cm.rainbow(np.linspace(0,1,len(labels)))
@@ -207,13 +216,13 @@ def visualize(Pokemonlst,Area):
         plt.scatter(*zip(*xplot), color=color[index]) #gives unique colors if there are enough colors to each pokemon in scatterplot
     plt.legend(labels)
     plt.show()
-
+    plt.title("population distribution of pokemon at: "+str(iter)+" iterations")
     for index in range(len(labels)):
         plt.scatter(labels[index],freq[index],color=color[index])
     plt.legend(labels)
     plt.show()
     names,killfreq = np.unique(killnamecounter,return_counts=True)
-    plt.title("kill frequencies, will be empty at beginning")
+    plt.title("win distribution: at: "+str(iter)+" iterations")
     color = cm.rainbow(np.linspace(0,1,len(names)))
     for index in range(len(names)):
         plt.scatter(names[index],killfreq[index], color=color[index]) #gives unique colors if there are enough colors to each pokemon in scatterplot
@@ -221,25 +230,28 @@ def visualize(Pokemonlst,Area):
     plt.show()
 
 
-###parameters, can also adjust reproduce cap in pokemonclass.py
+###PARAMETERS, CAN ALSO ADJUST STRENGHT CALCULATION AND REPRODUCE CAP IN POKEMON CLASS########################
+#HIGHLY RECOMMEND ADJUST REPRODUCE CAP DEPENDING ON HOW LOW HP POKEMON COMPARE TO MEGAEX.
 NumPokemon = 50
-Numduplicates = 4 #number of duplicates made of each pokemon
-Area = 200 #keep this large or not enough unique spots to start for pokemon
-engage_dist = 40
-iterations = 600 #killf
+Numduplicates = 5 #number of duplicates made of each pokemon
+Area = 400 #keep this large or not enough unique spots to start for pokemon
+engage_dist = 5
+iterations = 100 #killf
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
 var = .5 #from 0 to 1, how much variation do you want in pokemon battle outcomes
-vis_every_iters = 150 #set this to however often you want to visualize the simulation. for example 150 means visualizes every 150 iterations, eg at 150,300,450 etc
+vis_every_iters = iterations/2 #set this to however often you want to visualize the simulation. for example 150 means visualizes every 150 iterations, eg at 150,300,450 etc
+chance_survive = .5 # set this to values from 0 to 1, is chance a loser of battle escapes helps out the types that have low hp
 
+############################################################
 
-
-
-visualize(Pokemonlst,Area) #visualizes once at beginning
+vis_every_iters = int(vis_every_iters) #just in case are dividing iterations
+copyiter = iterations
+visualize(Pokemonlst,Area,0) #visualizes once at beginning
 while iterations > 0:
-    oneiter(Pokemonlst,Area,engage_dist,var) #runs one iteration of the simulation
+    oneiter(Pokemonlst,Area,engage_dist,var,chance_survive) #runs one iteration of the simulation
     iterations-=1
     if iterations % vis_every_iters ==0:
-        visualize(Pokemonlst,Area)
+        visualize(Pokemonlst,Area,copyiter - iterations)
 
 
 #visualize(Pokemonlst,Area)

@@ -21,7 +21,7 @@ class Pokemon(object):
         self.strength = self.statlst[3] * self.statlst[2] * self.statlst[4] * self.statlst[5] * self.statlst[7]
         self.position = pos
         self.isAlive = True
-        self.reproducecap = self.statlst[2]/10
+        self.reproducecap = self.statlst[2]/20
         self.reproducecounter = 0 # their cooldown is based on hp/10, when counter hits their cap they can reproduce
     
     def get_index(self):
