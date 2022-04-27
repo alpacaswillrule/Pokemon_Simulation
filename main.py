@@ -222,20 +222,26 @@ def visualize(Pokemonlst,Area):
 
 
 ###parameters, can also adjust reproduce cap in pokemonclass.py
-NumPokemon = 70
-Numduplicates = 2 #number of duplicates made of each pokemon
+NumPokemon = 50
+Numduplicates = 4 #number of duplicates made of each pokemon
 Area = 200 #keep this large or not enough unique spots to start for pokemon
 engage_dist = 40
-iterations = 200 #killf
+iterations = 600 #killf
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
 var = .5 #from 0 to 1, how much variation do you want in pokemon battle outcomes
+vis_every_iters = 150 #set this to however often you want to visualize the simulation. for example 150 means visualizes every 150 iterations, eg at 150,300,450 etc
 
-visualize(Pokemonlst,Area)
+
+
+
+visualize(Pokemonlst,Area) #visualizes once at beginning
 while iterations > 0:
-    oneiter(Pokemonlst,Area,engage_dist,var)
+    oneiter(Pokemonlst,Area,engage_dist,var) #runs one iteration of the simulation
     iterations-=1
-visualize(Pokemonlst,Area)
-     
+    if iterations % vis_every_iters ==0:
+        visualize(Pokemonlst,Area)
 
-#problem with code isnt 
+
+#visualize(Pokemonlst,Area)
+     
 
