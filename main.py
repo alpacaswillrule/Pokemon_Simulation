@@ -173,7 +173,7 @@ def reproduce(Pokemonlst,index1,index2,Area):
         Pokemonlst[index1].reproduce()
         x = random.sample(range(0, Area),1)
         y = random.sample(range(0, Area),1)
-        Pokemonlst.append(Pokemon(statsdataframe.loc[Pokemonlst[index1].get_index()],(x[0],y[0]),index1))
+        Pokemonlst.append(Pokemon(statsdataframe.loc[Pokemonlst[index1].get_index()],(x[0],y[0]),Pokemonlst[index1].get_index())) #changed lass param passed from index1
 
     return Pokemonlst
 
@@ -187,7 +187,7 @@ def oneiter(Pokemonlst, Area,engagedist,var,chance_survive): #use pdist here, ru
     it = iter(conflicts)
     conflicts = list(zip(it,it))
     
-    for conflict in conflicts: # problem, pokemonlst gets shortened by each battle so conflict indexes change, will change their status to is dead, then after for loop remove all isdead from list
+    for conflict in conflicts: 
         if Pokemonlst[conflict[0]].getname() ==  Pokemonlst[conflict[1]].getname():
             Pokemonlst = reproduce(Pokemonlst,conflict[0],conflict[1],Area)
             print(Pokemonlst[conflict[0]].getname()+" was born")
@@ -232,14 +232,14 @@ def visualize(Pokemonlst,Area,iter):
 
 ###PARAMETERS, CAN ALSO ADJUST STRENGHT CALCULATION AND REPRODUCE CAP IN POKEMON CLASS########################
 #HIGHLY RECOMMEND ADJUST REPRODUCE CAP DEPENDING ON HOW LOW HP POKEMON COMPARE TO MEGAEX.
-NumPokemon = 50
+NumPokemon = 1
 Numduplicates = 5 #number of duplicates made of each pokemon
-Area = 400 #keep this large or not enough unique spots to start for pokemon
+Area = 40 #keep this large or not enough unique spots to start for pokemon
 engage_dist = 5
 iterations = 100 #killf
 Pokemonlst = initialize_simulation(NumPokemon,Numduplicates,Area)
 var = .5 #from 0 to 1, how much variation do you want in pokemon battle outcomes
-vis_every_iters = iterations/2 #set this to however often you want to visualize the simulation. for example 150 means visualizes every 150 iterations, eg at 150,300,450 etc
+vis_every_iters = iterations #set this to however often you want to visualize the simulation. for example 150 means visualizes every 150 iterations, eg at 150,300,450 etc
 chance_survive = .8 # set this to values from 0 to 1, is chance a loser of battle escapes helps out the types that have low hp
 #also means that quantity of battles matters more, so may value speed state over raw stats too
 ############################################################
@@ -249,7 +249,9 @@ copyiter = iterations
 visualize(Pokemonlst,Area,0) #visualizes once at beginning
 while iterations > 0:
     oneiter(Pokemonlst,Area,engage_dist,var,chance_survive) #runs one iteration of the simulation
+    
     iterations-=1
+
     if iterations % vis_every_iters ==0:
         visualize(Pokemonlst,Area,copyiter - iterations)
 
