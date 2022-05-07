@@ -1,1 +1,3 @@
 # Pokemon_Simulation
+
+Have you ever wondered which Pokemon would dominate in a battle royale? under which conditions certain Pokemon would thrive? This project seeks to answer that, by reading Pokemon stats and types from a csv. Then a set amount of Pokemon are generated and put into a grid. They randomly walk around, fighting (or reproducing if they encounter the same type), until a set amount of iterations have passed. There are several parameters that can be adjusted, such as the chance of surviving a battle even if lost, cooldown on reproduction, amount of randomness in engagments, engagement distance, number of pokemon of each type, etc. 
